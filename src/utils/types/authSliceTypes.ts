@@ -3,7 +3,12 @@ export interface UserData {
   email: string;
   role: string;
   isVerified: boolean;
+  name?: string | null;
+  currency?: string;
+  theme?: string;
+  isActive?: boolean;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface UserState {

@@ -42,6 +42,12 @@ export default function HomePage() {
         <div className="flex items-center space-x-4">
           <span className="text-sm text-slate-400">{userData?.email}</span>
           <button
+            onClick={() => router.push('/profile')}
+            className="rounded-lg bg-white/5 px-4 py-2 text-xs font-semibold text-white border border-white/10 transition duration-200 hover:bg-white/10"
+          >
+            Profile Settings
+          </button>
+          <button
             onClick={handleLogout}
             disabled={isPending}
             className="rounded-lg bg-white/5 px-4 py-2 text-xs font-semibold text-white border border-white/10 transition duration-200 hover:bg-white/10 disabled:opacity-50"
