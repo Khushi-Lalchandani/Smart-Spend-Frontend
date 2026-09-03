@@ -42,7 +42,7 @@ export default function LoginPage() {
       { email, password },
       {
         onSuccess: (response) => {
-          const token = response?.data?.accessToken || response.accessToken;
+          const token = response?.data?.accessToken || response?.accessToken;
           if (token) {
             dispatch(setAuthToken(token));
             toast.success('Successfully logged in!');
@@ -61,7 +61,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 transition-colors duration-200 dark:bg-[#090d16]">
       <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-xl transition-all dark:border-slate-800 dark:bg-slate-900">
-        
+
         {/* Header Branding */}
         <div className="mb-8 text-center">
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white shadow-lg shadow-indigo-500/20">
@@ -88,11 +88,10 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
               disabled={isPending}
-              className={`mt-2 block w-full rounded-xl border bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:bg-white dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 dark:focus:bg-slate-800 ${
-                errors.email
+              className={`mt-2 block w-full rounded-xl border bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:bg-white dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 dark:focus:bg-slate-800 ${errors.email
                   ? 'border-red-500 focus:border-red-500'
                   : 'border-slate-200 focus:border-indigo-500 dark:border-slate-700 dark:focus:border-indigo-400'
-              }`}
+                }`}
             />
             {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
           </div>
@@ -107,11 +106,10 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               disabled={isPending}
-              className={`mt-2 block w-full rounded-xl border bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:bg-white dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 dark:focus:bg-slate-800 ${
-                errors.password
+              className={`mt-2 block w-full rounded-xl border bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:bg-white dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 dark:focus:bg-slate-800 ${errors.password
                   ? 'border-red-500 focus:border-red-500'
                   : 'border-slate-200 focus:border-indigo-500 dark:border-slate-700 dark:focus:border-indigo-400'
-              }`}
+                }`}
             />
             {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
           </div>
