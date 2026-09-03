@@ -5,12 +5,14 @@ import { useAppDispatch, useAppSelector } from '@/src/redux/store';
 import {
   selectAuthToken,
   selectUser,
+  selectDarkTheme,
   setUser,
   removeAuthToken,
   removeUser,
 } from '@/src/redux/reducers/authSlice';
-import { useMe } from '@/src/shared/hooks';
+import { useProfile } from '@/src/shared/hooks';
 import { ChildrenProps, UserData } from '@/src/utils/types';
+import Navigation from '@/src/components/Navigation';
 
 const PUBLIC_ROUTES = ['/login', '/register'];
 
@@ -21,62 +23,75 @@ const AuthLayout: React.FC<ChildrenProps> = ({ children }) => {
   
   const authToken = useAppSelector(selectAuthToken);
   const userData = useAppSelector(selectUser);
+  const darkTheme = useAppSelector(selectDarkTheme);
 
   const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
 
-  // Fetch user data if we have an auth token but no user details in state
-  const { data: meData, error: meError, isLoading: isMeLoading } = useMe(!!authToken && !userData);
-
+  // Sync theme class with document root
   useEffect(() => {
-    if (meData) {
-      const user = 'data' in meData && meData.data ? (meData.data as UserData) : (meData as UserData);
-      dispatch(setUser(user));
+    if (darkTheme) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
     }
-  }, [meData, dispatch]);
+  }, [darkTheme]);
+
+  // Fetch complete user profile if logged in but name/details are missing
+  const { data: profileResponse, error: profileError, isLoading: isProfileLoading } = useProfile(
+    !!authToken && (!userData || !userData.name)
+  );
 
   useEffect(() => {
-    if (meError) {
+    if (profileResponse?.data) {
+      dispatch(setUser(profileResponse.data as UserData));
+    }
+  }, [profileResponse, dispatch]);
+
+  useEffect(() => {
+    if (profileError) {
       dispatch(removeUser());
       dispatch(removeAuthToken());
       router.push('/login');
     }
-  }, [meError, dispatch, router]);
+  }, [profileError, dispatch, router]);
 
   useEffect(() => {
-    // If not loading me details
-    if (authToken && !userData && isMeLoading) {
+    if (authToken && (!userData || !userData.name) && isProfileLoading) {
       return;
     }
 
     if (!authToken && !isPublicRoute) {
-      // Not logged in and trying to access a protected page
       router.push('/login');
     } else if (authToken && isPublicRoute) {
-      // Logged in and trying to access login/register
       router.push('/');
     }
-  }, [authToken, userData, isPublicRoute, router, isMeLoading]);
+  }, [authToken, userData, isPublicRoute, router, isProfileLoading]);
 
-  // Loading state when we are restoring the session
-  if (authToken && !userData && isMeLoading) {
+  if (authToken && (!userData || !userData.name) && isProfileLoading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-[#F5F5F5]">
-        <p className="text-gray-600 font-medium">Restoring Session...</p>
+      <div className="flex h-screen w-full items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <div className="flex items-center space-x-3">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent dark:border-indigo-400"></div>
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Restoring Session...</p>
+        </div>
       </div>
     );
   }
 
-  // Hide protected page content while redirecting unauthenticated users
   if (!authToken && !isPublicRoute) {
     return null;
   }
 
-  // Hide auth pages while redirecting authenticated users
   if (authToken && isPublicRoute) {
     return null;
   }
 
-  return <>{children}</>;
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-900 transition-colors duration-200 dark:bg-[#090d16] dark:text-slate-100 flex flex-col">
+      {!isPublicRoute && authToken && <Navigation />}
+      <div className="flex-1">{children}</div>
+    </div>
+  );
 };
 
 export default AuthLayout;

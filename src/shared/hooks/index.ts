@@ -10,6 +10,11 @@ import {
   IUpdatePreferencesRequest,
   IChangePasswordRequest,
   IProfileResponse,
+  ITransactionListResponse,
+  ITransactionResponse,
+  ICreateTransactionRequest,
+  IUpdateTransactionRequest,
+  IQueryTransactionRequest,
 } from '@/src/utils/types';
 
 // Login mutation hook
@@ -149,6 +154,74 @@ export const useDeleteAccount = () => {
       (await callApi({
         method,
         url,
+      })) as { success: boolean },
+  });
+};
+
+// Get transactions query hook
+export const useGetTransactions = (params: IQueryTransactionRequest = {}, enabled = true) => {
+  const { url, method } = apiRoutes.transactions.GET;
+  const callApi = useAxios();
+
+  return useQuery<ITransactionListResponse, string>({
+    queryKey: [apiRoutes.transactions.GET.query, params],
+    queryFn: async () => (await callApi({ method, url, params })) as ITransactionListResponse,
+    enabled,
+  });
+};
+
+// Get single transaction query hook
+export const useGetTransaction = (id: string, enabled = true) => {
+  const { url, method } = apiRoutes.transactionById.GET;
+  const callApi = useAxios();
+
+  return useQuery<ITransactionResponse, string>({
+    queryKey: [apiRoutes.transactionById.GET.query, id],
+    queryFn: async () => (await callApi({ method, url: url(id) })) as ITransactionResponse,
+    enabled: enabled && !!id,
+  });
+};
+
+// Create transaction mutation hook
+export const useCreateTransaction = () => {
+  const { url, method } = apiRoutes.transactions.POST;
+  const callApi = useAxios();
+
+  return useMutation<ITransactionResponse, string, ICreateTransactionRequest>({
+    mutationFn: async (payload) =>
+      (await callApi({
+        method,
+        url,
+        data: payload,
+      })) as ITransactionResponse,
+  });
+};
+
+// Update transaction mutation hook
+export const useUpdateTransaction = (id: string) => {
+  const { url, method } = apiRoutes.transactionById.PATCH;
+  const callApi = useAxios();
+
+  return useMutation<ITransactionResponse, string, IUpdateTransactionRequest>({
+    mutationFn: async (payload) =>
+      (await callApi({
+        method,
+        url: url(id),
+        data: payload,
+      })) as ITransactionResponse,
+  });
+};
+
+// Delete transaction mutation hook
+export const useDeleteTransaction = (id: string) => {
+  const { url, method } = apiRoutes.transactionById.DELETE;
+  const callApi = useAxios();
+
+  return useMutation<{ success: boolean }, string, void>({
+    mutationFn: async () =>
+      (await callApi({
+        method,
+        url: url(id),
       })) as { success: boolean },
   });
 };

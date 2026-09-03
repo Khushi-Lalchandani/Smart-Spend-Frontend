@@ -24,4 +24,13 @@ export const apiRoutes = {
   deleteAccount: {
     DELETE: { query: 'DELETE_ACCOUNT', method: 'DELETE', url: `${BASE_URL}/users` },
   },
+  transactions: {
+    GET: { query: 'GET_TRANSACTIONS', method: 'GET', url: `${BASE_URL}/transactions` },
+    POST: { query: 'CREATE_TRANSACTION', method: 'POST', url: `${BASE_URL}/transactions` },
+  },
+  transactionById: {
+    GET: { query: 'GET_TRANSACTION', method: 'GET', url: (id: string) => `${BASE_URL}/transactions/${id}` },
+    PATCH: { query: 'UPDATE_TRANSACTION', method: 'PATCH', url: (id: string) => `${BASE_URL}/transactions/${id}` },
+    DELETE: { query: 'DELETE_TRANSACTION', method: 'DELETE', url: (id: string) => `${BASE_URL}/transactions/${id}` },
+  },
 };

@@ -4,3 +4,4 @@ export * from './useAxiosTypes';
 export * from './authSliceTypes';
 export * from './authTypes';
 export * from './usersTypes';
+export * from './transactionsTypes';
